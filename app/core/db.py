@@ -35,4 +35,17 @@ mongo_db = mongo_client[MONGO_DB]
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = os.getenv("REDIS_PORT", 6379)
 
-redis_client = aioredis.from_url(f"redis://{REDIS_HOST}:{REDIS_PORT}", decode_responses=True)
+# Changed decode_responses to False (we'll handle decoding in redis_cache.py)
+redis_client = aioredis.from_url(f"redis://{REDIS_HOST}:{REDIS_PORT}", decode_responses=False)
+
+
+# ---------- Database Dependency ----------
+async def get_db():
+    """
+    Dependency for FastAPI routes to get database session.
+    """
+    async with async_session_maker() as session:
+        try:
+            yield session
+        finally:
+            await session.close()

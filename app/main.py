@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from app.core.db import engine, Base, redis_client, mongo_client
+from app.api.routes import router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -9,7 +10,7 @@ async def lifespan(app: FastAPI):
         await conn.run_sync(Base.metadata.create_all)
     print("✅ Databases initialized successfully.")
     
-    yield  # Application runs here
+    yield
     
     # Shutdown
     await redis_client.close()
@@ -17,6 +18,9 @@ async def lifespan(app: FastAPI):
     print("🛑 Database connections closed.")
 
 app = FastAPI(title="Shortify", lifespan=lifespan)
+
+# Include routes
+app.include_router(router)
 
 @app.get("/")
 def root():
