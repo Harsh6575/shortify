@@ -1,6 +1,6 @@
 from pydantic import BaseModel, HttpUrl, Field
 from datetime import datetime
-from typing import Optional
+from typing import Optional,List
 
 class URLCreate(BaseModel):
     long_url: HttpUrl
@@ -20,3 +20,7 @@ class URLDelete(BaseModel):
 
 class RedirectResponse(BaseModel):
     long_url: str
+
+class URLListResponse(BaseModel):
+    urls: List[URLResponse]
+    total: int

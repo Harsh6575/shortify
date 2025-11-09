@@ -89,3 +89,16 @@ async def delete_url(short_id: str, db: AsyncSession) -> bool:
     await delete_short_url(short_id)
     
     return True
+
+async def get_recent_urls(db: AsyncSession, limit: int = 10) -> list[URL]:
+    """
+    Get most recent shortened URLs for development.
+    """
+    from sqlalchemy import desc
+    
+    result = await db.execute(
+        select(URL)
+        .order_by(desc(URL.created_at))
+        .limit(limit)
+    )
+    return result.scalars().all()
