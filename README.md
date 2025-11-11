@@ -298,7 +298,12 @@ MIT License - Feel free to use this for learning!
 ## 👤 Author
 
 **Harsh Vansjaliya**  
-Building scalable backend systems | Exploring system design patterns
+Software Developer | Exploring Backend & System Design
+
+I'm a passionate Software Developer with ~2 years of experience, specializing in building performant and scalable applications. Previously worked at AlgoAcharya building trading platforms with Next.js, TypeScript, and Django. Currently diving deep into backend development, system design, and algorithmic trading.
+
+**Tech Stack**: Next.js, TypeScript, Python, Django, PostgreSQL, FastAPI, GraphQL  
+**Interests**: Backend Systems, Algorithmic Trading, System Design, Performance Optimization
 
 - Portfolio: [harsh-vansjaliya.vercel.app](https://harsh-vansjaliya.vercel.app)
 - GitHub: [harsh6575](https://github.com/harsh6575)
