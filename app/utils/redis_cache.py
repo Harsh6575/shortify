@@ -3,25 +3,25 @@ from typing import Optional
 
 CACHE_TTL = 60 * 60 * 24 * 7  # 7 days in seconds
 
-async def get_long_url(short_id: str) -> Optional[str]:
+async def get_full_url(short_id: str) -> Optional[str]:
     """
     Get long URL from Redis cache.
     Returns None if not found.
     """
-    long_url = await redis_client.get(f"short:{short_id}")
-    if long_url:
-        return long_url.decode('utf-8')
+    full_url = await redis_client.get(f"short:{short_id}")
+    if full_url:
+        return full_url.decode('utf-8')
     return None
 
-async def set_long_url(short_id: str, long_url: str) -> None:
+async def set_full_url(short_id: str, full_url: str) -> None:
     """
-    Cache short_id -> long_url mapping in Redis.
+    Cache short_id -> full_url mapping in Redis.
     TTL: 7 days
     """
     await redis_client.setex(
         f"short:{short_id}",
         CACHE_TTL,
-        long_url
+        full_url
     )
 
 async def delete_short_url(short_id: str) -> None:

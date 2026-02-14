@@ -1,51 +1,27 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker, declarative_base
 from motor.motor_asyncio import AsyncIOMotorClient
-import redis.asyncio as aioredis
-import os
-from dotenv import load_dotenv
+from redis.asyncio import Redis
+from app.core.config import settings
+from app.models.mongo_models import URLModel
 
-load_dotenv()
+class Database:
+    client: AsyncIOMotorClient = None
+    db = None
+    redis: Redis = None
 
-# ---------- PostgreSQL ----------
-POSTGRES_USER = os.getenv("POSTGRES_USER")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
-POSTGRES_DB = os.getenv("POSTGRES_DB")
+db = Database()
 
-DATABASE_URL = (
-    f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
-)
+async def connect_to_mongo():
+    db.client = AsyncIOMotorClient(settings.MONGODB_URL)
+    db.db = db.client[settings.MONGODB_DB_NAME]
+    db.redis = Redis.from_url(settings.REDIS_URL, decode_responses=True)
+    
+    # This acts as your migration: Create a unique index on short_id
+    await db.db[URLModel.Settings.collection_name].create_index(
+        "short_id", unique=True
+    )
 
-engine = create_async_engine(DATABASE_URL, echo=False)
-async_session_maker = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
-Base = declarative_base()
-
-
-# ---------- MongoDB ----------
-MONGO_URL = os.getenv("MONGO_URL", "mongodb://localhost:27017")
-MONGO_DB = os.getenv("MONGO_DB", "shortify")
-
-mongo_client = AsyncIOMotorClient(MONGO_URL)
-mongo_db = mongo_client[MONGO_DB]
-
-
-# ---------- Redis ----------
-REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
-REDIS_PORT = os.getenv("REDIS_PORT", 6379)
-
-# Changed decode_responses to False (we'll handle decoding in redis_cache.py)
-redis_client = aioredis.from_url(f"redis://{REDIS_HOST}:{REDIS_PORT}", decode_responses=False)
-
-
-# ---------- Database Dependency ----------
-async def get_db():
-    """
-    Dependency for FastAPI routes to get database session.
-    """
-    async with async_session_maker() as session:
-        try:
-            yield session
-        finally:
-            await session.close()
+async def close_mongo_connection():
+    if db.client:
+        db.client.close()
+    if db.redis:
+        await db.redis.close()
