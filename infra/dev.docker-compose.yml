@@ -1,0 +1,22 @@
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: shortify_db_dev
+    env_file:
+      - .env.dev
+    ports:
+      - "${MONGO_PORT}:27017"
+    volumes:
+      - shortify_mongo_data_dev:/data/db
+
+  redis:
+    image: redis:alpine
+    container_name: shortify_cache_dev
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - shortify_redis_data_dev:/data
+
+volumes:
+  shortify_mongo_data_dev: # Unique name for Dev
+  shortify_redis_data_dev:

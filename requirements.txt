@@ -1,16 +1,6 @@
-# Existing dependencies
-fastapi
+fastapi[standard]
 uvicorn
-sqlalchemy
-asyncpg
-redis
-motor
+motor       # Async MongoDB driver
+redis       # Redis client
+pydantic-settings
 python-dotenv
-
-# Testing dependencies
-pytest
-pytest-asyncio
-pytest-cov
-httpx
-faker
-locust

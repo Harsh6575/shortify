@@ -15,15 +15,15 @@ def base62_encode(num: int) -> str:
     
     return ''.join(reversed(result))
 
-def generate_short_id(long_url: str, user_id: int = None) -> str:
+def generate_short_id(full_url: str) -> str:
     """
     Generate a 7-character hash-based short ID.
-    Uses long_url + user_id (if provided) for uniqueness.
+    Uses full_url + user_id (if provided) for uniqueness.
     """
-    # Combine long_url with user_id for better distribution
-    data = long_url
-    if user_id:
-        data = f"{long_url}:{user_id}"
+    # Combine full_url with user_id for better distribution
+    data = full_url
+    # if user_id:
+    #     data = f"{full_url}:{user_id}"
     
     # Create SHA-256 hash
     hash_obj = hashlib.sha256(data.encode('utf-8'))
