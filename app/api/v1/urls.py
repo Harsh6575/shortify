@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from app.core.db import db
-from app.api.v1.types import URLCreate,URLDelete,URLListResponse,RedirectResponse,URLResponse
+from app.api.v1.types import URLCreate, URLResponse
 from app.services.url_service import URLService
 from fastapi.responses import RedirectResponse as StarletteRedirectResponse # Rename to avoid confusion
 
@@ -28,7 +28,7 @@ async def create_short_url(url: URLCreate, service: URLService = Depends(get_url
         short_url=f"{BASE_URL}/{url.short_id}"
     )
 
-@router.get("/{short_id}",response_model=RedirectResponse)
+@router.get("/{short_id}", response_class=StarletteRedirectResponse)
 async def redirect_to_full(short_id: str, service: URLService = Depends(get_url_service)):
     """
     Docstring for redirect_to_full

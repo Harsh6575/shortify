@@ -1,11 +1,11 @@
-from motor.motor_asyncio import AsyncIOMotorClient
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from redis.asyncio import Redis
 from app.core.config import settings
 from app.models.mongo_models import URLModel
 
 class Database:
     client: AsyncIOMotorClient = None
-    db = None
+    db: AsyncIOMotorDatabase = None
     redis: Redis = None
 
 db = Database()

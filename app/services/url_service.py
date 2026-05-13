@@ -3,6 +3,7 @@ from redis.asyncio import Redis
 from app.models.mongo_models import URLModel
 from fastapi import HTTPException
 from app.utils.hash_generator import generate_short_id
+import uuid
 
 REDIS_STORE_TIME = 60 * 60 * 24  # 24 hours in seconds
 
@@ -12,12 +13,18 @@ class URLService:
         self.redis = redis
     
     async def create_short_url(self, full_url: str) -> URLModel: # , user_id: Optional[int] = None
-        # Generate a unique short ID (you can use a library like shortuuid or nanoid)
         short_id = generate_short_id(str(full_url))
-
-        existing_url = await self.collection.find_one({"short_id": short_id})
-        if existing_url:
-            return URLModel(**existing_url)
+        # Loop to handle extremely rare hash collisions
+        while True:
+            existing_url = await self.collection.find_one({"short_id": short_id})
+            if existing_url:
+                if str(existing_url.get("full_url")) == str(full_url):
+                    return URLModel(**existing_url)
+                else:
+                    # Hash collision detected! Generate a new short_id by salting it
+                    short_id = generate_short_id(str(full_url) + str(uuid.uuid4()))
+            else:
+                break
         
         url_data = URLModel(
             short_id=short_id,

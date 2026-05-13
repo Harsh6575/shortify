@@ -1,6 +1,5 @@
 from pydantic import BaseModel, HttpUrl
 from datetime import datetime
-from typing import Optional,List
 
 class URLCreate(BaseModel):
     full_url: HttpUrl
@@ -14,13 +13,3 @@ class URLResponse(BaseModel):
 
     class Config:
         from_attributes = True
-
-class URLDelete(BaseModel):
-    short_id: str
-
-class RedirectResponse(BaseModel):
-    full_url: str
-
-class URLListResponse(BaseModel):
-    urls: List[URLResponse]
-    total: int
