@@ -15,7 +15,7 @@ async def connect_to_mongo():
     db.db = db.client[settings.MONGODB_DB_NAME]
     db.redis = Redis.from_url(settings.REDIS_URL, decode_responses=True)
     
-    # This acts as your migration: Create a unique index on short_id
+    # Final guard against duplicate short_ids: the service checks before inserting, but that check isn't atomic
     await db.db[URLModel.Settings.collection_name].create_index(
         "short_id", unique=True
     )
@@ -24,4 +24,4 @@ async def close_mongo_connection():
     if db.client:
         db.client.close()
     if db.redis:
-        await db.redis.close()
+        await db.redis.aclose()

@@ -1,6 +1,6 @@
-fastapi[standard]
-uvicorn
-motor       # Async MongoDB driver
-redis       # Redis client
-pydantic-settings
-python-dotenv
+fastapi[standard]==0.143.0
+uvicorn==0.54.0
+motor==3.7.1       # Async MongoDB driver
+redis==8.1.0       # Redis client
+pydantic-settings==2.15.0
+python-dotenv==1.2.4

@@ -3,7 +3,6 @@ from datetime import datetime
 
 class URLCreate(BaseModel):
     full_url: HttpUrl
-    # user_id: Optional[int] = None
 
 class URLResponse(BaseModel):
     short_id: str

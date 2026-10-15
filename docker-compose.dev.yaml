@@ -1,0 +1,26 @@
+# Optional standalone MongoDB + Redis for dev, if the global infra isn't available.
+# Uses ports 27018/6380 so it can run alongside global_mongodb and global_redis.
+# Usage: docker compose -f docker-compose.dev.yaml up -d, then switch the URLs in .env (see .env.example)
+services:
+  mongodb:
+    image: mongo:8.0
+    container_name: shortify_mongo_dev
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+    ports:
+      - "27018:27017"
+    # Named volume, not a bind mount: on Docker Desktop for Mac, mongod can't open bind-mounted files it doesn't own
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    container_name: shortify_redis_dev
+    command: ["redis-server", "--requirepass", "dev_pass"]
+    ports:
+      - "6380:6379"
+
+volumes:
+  mongo_data:
+    name: shortify_mongo_dev_data
